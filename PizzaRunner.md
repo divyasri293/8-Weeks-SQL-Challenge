@@ -161,10 +161,12 @@ select count(cus.pizza_id) as both_ext_and_exc from customer_orders cus
 join runner_orders run
 on cus.order_id = run.order_id
 where extras IS not NULL and exclusions IS not NULL and run.cancellation IS not NULL;
+```
 
 -------------------------------------------------------------------------------------------
 -- # What was the total volume of pizzas ordered for each hour of the day?
 
+```
 SELECT 
 	HOUR(order_date) AS hour_of_the_day,
 	COUNT(order_id) AS no_of_pizzas
@@ -225,6 +227,7 @@ group by number_of_pizzas ;
 ```
 -------------------------------------------------------------------------------------------
 
+What was the average distance travelled for each customer?
 ```
 select
 	cus.customer_id, round(avg(distance),2) as avg_distance_travelled
@@ -234,7 +237,7 @@ group by cus.customer_id;
 ```
 
 -------------------------------------------------------------------------------------------
-
+What was the difference between the longest and shortest delivery times for all orders?
 ```
 SELECT MAX(duration + 0)- MIN(duration + 0) AS difference FROM runner_orders
 WHERE (duration + 0) is not NULL;
@@ -242,6 +245,7 @@ WHERE (duration + 0) is not NULL;
 
 -------------------------------------------------------------------------------------------
 
+What was the average speed for each runner for each delivery and do you notice any trend for these values?
 ```
 select
 	run.order_id, run.runner_id, round(avg(distance/duration)*60,2)
@@ -251,8 +255,11 @@ group by run.order_id, run.runner_id
 
 -------------------------------------------------------------------------------------------
 
+What is the successful delivery percentage for each runner?
 
+```
 select
 	 runner_id, (sum(case when cancellation is NULL then 1 else 0 end)/count(order_id))*100 as delivery_percentage
 from runner_orders
 group by runner_id
+```
