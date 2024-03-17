@@ -273,3 +273,19 @@ select
 from runner_orders
 group by runner_id
 ```
+-------------------------------------------------------------------------------------------
+
+SELECT SUM(CASE WHEN cus.pizza_id = 1 THEN 12 ELSE 10 END) AS total_price FROM runner_orders run 
+JOIN customer_orders cus ON cus.order_id = run.order_id WHERE run.cancellation is NULL
+
+-------------------------------------------------------------------------------------------
+WITH cte AS (
+SELECT SUM(CASE WHEN cus.pizza_id = 1 THEN 12 ELSE 10 END) AS total_price FROM runner_orders run 
+JOIN customer_orders cus ON cus.order_id = run.order_id WHERE run.cancellation is NULL )
+SELECT (
+	LENGTH(group_concat(cus.extras)) - LENGTH(REPLACE(group_concat(cus.extras), ',', '')) + 1) + c.total_price
+    AS total_price_charges
+FROM customer_orders cus
+JOIN cte c ON c.pizza_id = cus.pizza_id;
+
+
