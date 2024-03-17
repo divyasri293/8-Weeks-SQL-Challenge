@@ -68,6 +68,7 @@ Case Study A: Pizza Metrics
 ```
 select count(order_id) as num_of_pizzas from customer_orders;
 ```
+![image](https://github.com/divyasri293/8-Weeks-SQL-Challenge/assets/52830608/0bd24fa6-9da2-442b-9d45-5e74fd91eb1e)
 
 ------------------------------------------------------------------------------------------- 
 -- # How many unique customer orders were made?
@@ -75,6 +76,7 @@ select count(order_id) as num_of_pizzas from customer_orders;
 ```
 select count(distinct order_id)as unique_pizzas from customer_orders;
 ```
+![image](https://github.com/divyasri293/8-Weeks-SQL-Challenge/assets/52830608/eb8898d1-846e-46d9-92f7-ded587c489fe)
 
 -------------------------------------------------------------------------------------------
 -- # How many successful orders were delivered by each runner?
@@ -84,9 +86,10 @@ SELECT
 	runner_id,
 	COUNT(order_id) AS successful_orders
 FROM runner_orders
-WHERE cancellation ISNULL
+WHERE cancellation IS NULL
 GROUP BY runner_id;
 ```
+![image](https://github.com/divyasri293/8-Weeks-SQL-Challenge/assets/52830608/3e5cf66f-4a7f-44c2-9952-26716764c9c5)
 
 -------------------------------------------------------------------------------------------
 -- # How many of each type of pizza was delivered?
@@ -94,15 +97,16 @@ GROUP BY runner_id;
 ```
 select 
 	piz.pizza_name, 
-    count(cus.pizza_id) 
+    count(cus.pizza_id) as pizza_count 
 from customer_orders cus
 	join pizza_names piz 
     on cus.pizza_id = piz.pizza_id
     join runner_orders run
     on cus.order_id = run.order_id
-	where run.cancellation ISNULL
+	where run.cancellation IS NULL
 	group by piz.pizza_name;
  ```
+![image](https://github.com/divyasri293/8-Weeks-SQL-Challenge/assets/52830608/ad0b4517-eb3a-452b-9920-29593b1c2028)
 
 -------------------------------------------------------------------------------------------	
 -- # How many Vegetarian and Meatlovers were ordered by each customer?
@@ -114,7 +118,9 @@ from customer_orders cus
 join pizza_names piz
 on cus.pizza_id = piz.pizza_id
 group by cus.customer_id,piz.pizza_name;
-```	
+```
+![image](https://github.com/divyasri293/8-Weeks-SQL-Challenge/assets/52830608/7d56d253-5a67-41ce-b695-dd0f35f09a50)
+	
 alternative:
 ```	
 SELECT
@@ -138,6 +144,7 @@ select order_id, max_pizzas from(
 order by max_pizzas DESC
 limit 1;
 ```
+![image](https://github.com/divyasri293/8-Weeks-SQL-Challenge/assets/52830608/c82ac4e2-2144-4ec1-99e1-f3903f049b91)
 
 -------------------------------------------------------------------------------------------
 -- # For each customer, how many delivered pizzas had at least 1 change and how many had no changes?
@@ -145,7 +152,7 @@ limit 1;
 ```
 select cus.customer_id,
 	SUM(CASE when cus.exclusions Is NOT NULL OR cus.extras IS NOT NULL THEN 1 ELSE 0 END) AS changed,
-    SUM(CASE when cus.exclusions ISNULL AND cus.extras ISNULL THEN 1 ELSE 0 END) AS no_changes
+    SUM(CASE when cus.exclusions IS NULL AND cus.extras IS NULL THEN 1 ELSE 0 END) AS no_changes
   FROM customer_orders cus
   JOIN runner_orders run
   on cus.order_id = run.order_id
@@ -153,15 +160,18 @@ select cus.customer_id,
   GROUP BY customer_id;
 ```
 
+![image](https://github.com/divyasri293/8-Weeks-SQL-Challenge/assets/52830608/8f8dc8ce-79f2-4935-9ae2-9b818a5101a9)
+
+
 -------------------------------------------------------------------------------------------  
 -- # How many pizzas were delivered that had both exclusions and extras?
 
 ```
-select count(cus.pizza_id) as both_ext_and_exc from customer_orders cus
-join runner_orders run
-on cus.order_id = run.order_id
-where extras IS not NULL and exclusions IS not NULL and run.cancellation IS not NULL;
+SELECT COUNT(pizza_id) AS no_of_changed_pizzas
+FROM customer_orders
+WHERE exclusions IS NOT null AND extras IS NOT null;
 ```
+![image](https://github.com/divyasri293/8-Weeks-SQL-Challenge/assets/52830608/c48f40c8-23ac-4b0b-bcf4-5137ea181386)
 
 -------------------------------------------------------------------------------------------
 -- # What was the total volume of pizzas ordered for each hour of the day?
