@@ -288,4 +288,36 @@ SELECT (
 FROM customer_orders cus
 JOIN cte c ON c.pizza_id = cus.pizza_id;
 
+-------------------------------------------------------------------------------------------
 
+DROP TABLE IF EXISTS ratings;
+CREATE TABLE ratings (
+customer_id int primary key,
+order_id int,
+rating int);
+
+-------------------------------------------------------------------------------------------
+
+SELECT
+	cus.customer_id,
+    cus.order_id,
+    run.runner_id,
+    rt.rating,
+    cus.order_date,
+    run.pickup_time,
+    MINUTE(TIMEDIFF(cus.order_date, run.pickup_time)) AS time_order_pickup,
+    run.duration,
+    ROUND(avg(60 * run.distance / run.duration), 1) AS avg_speed,
+    COUNT(cus.pizza_id) AS num_pizza
+FROM customer_orders cus
+JOIN runner_orders run ON cus.order_id = run.order_id
+JOIN ratings rt ON cus.order_id = rt.order_id
+GROUP BY cus.customer_id, cus.order_id, run.runner_id, rt.rating, cus.order_date, run.pickup_time, time_order_pickup, run.duration
+ORDER BY cus.customer_id;
+
+-------------------------------------------------------------------------------------------
+
+SET @total_price_pizza = 138;
+SELECT
+	ROUND(@total_price_pizza - (SUM(duration))*0.3,0) AS final_price
+FROM runner_orders;
