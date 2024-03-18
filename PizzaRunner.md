@@ -200,6 +200,9 @@ ORDER BY hour_of_day;
 ```
 
 -------------------------------------------------------------------------------------------
+Case Study B: Runner and Customer Experience
+-------------------------------------------------------------------------------------------
+
 -- # How many runners signed up for each 1 week period? (i.e. week starts 2021-01-01)
 
 ```
@@ -274,11 +277,17 @@ from runner_orders
 group by runner_id
 ```
 -------------------------------------------------------------------------------------------
+Case C: Pricing and Ratings
+-------------------------------------------------------------------------------------------
+If a Meat Lovers pizza costs $12 and Vegetarian costs $10 and there were no charges for changes - how much money has Pizza Runner made so far if there are no delivery fees?
 
+```
 SELECT SUM(CASE WHEN cus.pizza_id = 1 THEN 12 ELSE 10 END) AS total_price FROM runner_orders run 
 JOIN customer_orders cus ON cus.order_id = run.order_id WHERE run.cancellation is NULL
-
+```
 -------------------------------------------------------------------------------------------
+What if there was an additional $1 charge for any pizza extras?
+Add cheese is $1 extra
 
 ```
 WITH cte AS (
@@ -292,6 +301,7 @@ JOIN cte c ON c.pizza_id = cus.pizza_id;
 ```
 
 -------------------------------------------------------------------------------------------
+The Pizza Runner team now wants to add an additional ratings system that allows customers to rate their runner, how would you design an additional table for this new dataset - generate a schema for this new table and insert your own data for ratings for each successful customer order between 1 to 5.
 
 ```
 DROP TABLE IF EXISTS ratings;
@@ -300,11 +310,21 @@ customer_id int primary key,
 order_id int,
 rating int);
 
-INSERT INTO ratings VALUES (1, 1, 5), (2, 2, 3), (3, 3, 4), (4, 4, 2), (5, 5,3), (6, 7, 3), (7, 8, 4), (8, 10, 5);
+INSERT INTO ratings VALUES (1, 1, 5), (2, 2, 3), (3, 3, 4), (4, 4, 2), (5, 5,3);
  ```
 
 -------------------------------------------------------------------------------------------
-
+Using your newly generated table - can you join all of the information together to form a table which has the following information for successful deliveries?
+customer_id, 
+order_id, 
+runner_id, 
+rating, 
+order_time, 
+pickup_time, 
+Time between order and pickup, 
+Delivery duration, 
+Average speed, 
+Total number of pizzas
 ```
 SELECT
 	cus.customer_id,
@@ -326,6 +346,7 @@ ORDER BY cus.customer_id;
 ```
 
 -------------------------------------------------------------------------------------------
+If a Meat Lovers pizza was $12 and Vegetarian $10 fixed prices with no cost for extras and each runner is paid $0.30 per kilometre traveled - how much money does Pizza Runner have left over after these deliveries?
 
 ```
 SET @total_price_pizza = 138;
