@@ -279,6 +279,8 @@ SELECT SUM(CASE WHEN cus.pizza_id = 1 THEN 12 ELSE 10 END) AS total_price FROM r
 JOIN customer_orders cus ON cus.order_id = run.order_id WHERE run.cancellation is NULL
 
 -------------------------------------------------------------------------------------------
+
+```
 WITH cte AS (
 SELECT SUM(CASE WHEN cus.pizza_id = 1 THEN 12 ELSE 10 END) AS total_price FROM runner_orders run 
 JOIN customer_orders cus ON cus.order_id = run.order_id WHERE run.cancellation is NULL )
@@ -287,17 +289,23 @@ SELECT (
     AS total_price_charges
 FROM customer_orders cus
 JOIN cte c ON c.pizza_id = cus.pizza_id;
+```
 
 -------------------------------------------------------------------------------------------
 
+```
 DROP TABLE IF EXISTS ratings;
 CREATE TABLE ratings (
 customer_id int primary key,
 order_id int,
 rating int);
 
+INSERT INTO ratings VALUES (1, 1, 5), (2, 2, 3), (3, 3, 4), (4, 4, 2), (5, 5,3), (6, 7, 3), (7, 8, 4), (8, 10, 5);
+ ```
+
 -------------------------------------------------------------------------------------------
 
+```
 SELECT
 	cus.customer_id,
     cus.order_id,
@@ -312,12 +320,16 @@ SELECT
 FROM customer_orders cus
 JOIN runner_orders run ON cus.order_id = run.order_id
 JOIN ratings rt ON cus.order_id = rt.order_id
+JOIN ratings rt ON cus.customer_id = rt.customer_id
 GROUP BY cus.customer_id, cus.order_id, run.runner_id, rt.rating, cus.order_date, run.pickup_time, time_order_pickup, run.duration
 ORDER BY cus.customer_id;
+```
 
 -------------------------------------------------------------------------------------------
 
+```
 SET @total_price_pizza = 138;
 SELECT
 	ROUND(@total_price_pizza - (SUM(duration))*0.3,0) AS final_price
 FROM runner_orders;
+```
